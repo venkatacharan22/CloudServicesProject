@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Allow reading other users for team formation
+    }
+    
+    // Hackathons are readable by all, writable by organizers
+    match /hackathons/{hackathonId} {
+      allow read: if true;
+      allow create: if request.auth != null && 
+        request.auth.token.role == 'organizer';
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.organizer_id;
+    }
+    
+    // Teams are readable by all, writable by members
+    match /teams/{teamId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && 
+        request.auth.uid in resource.data.members;
+      allow delete: if request.auth != null && 
+        request.auth.uid == resource.data.leader_id;
+    }
+    
+    // Submissions are readable by all, writable by submitters
+    match /submissions/{submissionId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.submitter_id;
+    }
+    
+    // Admin-only collections
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.role == 'admin';
+    }
+  }
+}

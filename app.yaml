@@ -1,0 +1,50 @@
+# Google App Engine configuration for HackHub
+runtime: python39
+
+# Environment variables
+env_variables:
+  GOOGLE_CLOUD_PROJECT: "hackhub-463514"
+  FIREBASE_PROJECT_ID: "hackhub-d80ed"
+  
+# Automatic scaling configuration
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+
+# Health check configuration
+readiness_check:
+  path: "/health"
+  check_interval_sec: 5
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2
+
+liveness_check:
+  path: "/health"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 4
+  success_threshold: 2
+
+# Static file handlers for React build
+handlers:
+- url: /static
+  static_dir: client/build/static
+  secure: always
+
+- url: /(.*\.(json|ico|js|css|txt|svg|png|jpg|jpeg|gif|woff|woff2))$
+  static_files: client/build/\1
+  upload: client/build/.*\.(json|ico|js|css|txt|svg|png|jpg|jpeg|gif|woff|woff2)$
+  secure: always
+
+# API routes
+- url: /api/.*
+  script: auto
+  secure: always
+
+# Catch-all for React Router
+- url: /.*
+  static_files: client/build/index.html
+  upload: client/build/index.html
+  secure: always

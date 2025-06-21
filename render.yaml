@@ -1,0 +1,48 @@
+services:
+  # Backend API Service
+  - type: web
+    name: hackhub-backend
+    env: python
+    buildCommand: cd server && pip install -r ../requirements.txt
+    startCommand: cd server && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FIREBASE_ADMIN_SDK_PATH
+        value: ./utils/firebase-admin-sdk.json
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: GOOGLE_CLOUD_PROJECT
+        value: hackhub-463514
+      - key: GMAIL_SERVICE_ACCOUNT_EMAIL
+        value: hackhub-919@hackhub-463514.iam.gserviceaccount.com
+      - key: CORS_ORIGINS
+        value: https://hackhub-frontend.onrender.com,http://localhost:3000
+      - key: JWT_SECRET_KEY
+        value: HackHub2024_SecureKey_9f8e7d6c5b4a3210fedcba0987654321abcdef1234567890
+
+  # Frontend Service
+  - type: web
+    name: hackhub-frontend
+    env: node
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npx serve -s build -l $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: REACT_APP_FIREBASE_API_KEY
+        value: AIzaSyAiEpm1nAGtA02XE2YSAK5kB1raJxYZOLM
+      - key: REACT_APP_FIREBASE_AUTH_DOMAIN
+        value: hackhub-d80ed.firebaseapp.com
+      - key: REACT_APP_FIREBASE_PROJECT_ID
+        value: hackhub-d80ed
+      - key: REACT_APP_FIREBASE_STORAGE_BUCKET
+        value: hackhub-d80ed.firebasestorage.app
+      - key: REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+        value: 796925165887
+      - key: REACT_APP_FIREBASE_APP_ID
+        value: 1:796925165887:web:e3cf95f0aa4f340e02938a
+      - key: REACT_APP_GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: REACT_APP_API_URL
+        value: https://hackhub-backend.onrender.com
