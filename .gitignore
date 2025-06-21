@@ -36,7 +36,10 @@ ui-debug.log
 # Google Cloud
 .gcloudignore
 gcp-service-account.json
-# firebase-admin-sdk.json - Keep for Render deployment
+firebase-admin-sdk.json
+hackhub-service-account.json
+server/firebase-admin-sdk.json
+# Service account files - these contain sensitive credentials
 
 # Logs
 logs
